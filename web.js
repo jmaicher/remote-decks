@@ -1,4 +1,5 @@
 var express = require('express'),
+    io = require('socket.io'),
     stylus = require('stylus'),
     http = require('http');
 
@@ -7,9 +8,13 @@ var express = require('express'),
 // ## Setup & Configuration ##
 // ###########################
 
-var app = express();
+var app = express(),
+    server = http.createServer(app),
+    port = process.env.PORT || 3000;
 
-// serve static assets
+app.set('title', 'Awesome remote decks are awesome!');
+
+// assets
 var assets_path = __dirname + '/public';
 app.use(express.static(assets_path));
 // use stylus for stylesheets
@@ -26,9 +31,36 @@ app.use(stylus.middleware({
 var view_path = __dirname + '/views';
 app.set('views', view_path);
 app.set('view engine', 'jade');
+app.set('view options', { layout: false });
 
 // logging
 app.use(express.logger());
+
+
+// ####################
+// ## Socket.io #######
+// ####################
+
+var io = io.listen(server);
+
+// settings for heroku
+io.configure(function () {
+  io.set("transports", ["xhr-polling"]);
+  io.set("polling duration", 10);
+});
+
+var i = 1;
+
+io.sockets.on('connection', function(socket) {
+
+  socket.emit('server-news', { i: i });
+  
+  socket.on('client-news', function(data) {
+    i = data.i;
+    console.log(i);
+  });
+
+});
 
 
 // ####################
@@ -36,11 +68,17 @@ app.use(express.logger());
 // ####################
 
 app.get('/', function(req, res) {
-  res.render('presentation');
+  res.render('presentation', {
+    title: app.get('title'),
+    layout: 'presentation/layout'
+  });
 });
 
 app.get('/presenter', function(req, res) {
-  res.render('presenter');
+  res.render('presenter', {
+    title: 'Presenter - ' + app.get('title'),
+    layout: 'presenter/layout'
+  });
 });
 
 
@@ -48,7 +86,6 @@ app.get('/presenter', function(req, res) {
 // ## Run kitten, run ###
 // ######################
 
-var port = process.env.PORT || 3000;
-http.createServer(app).listen(port, function() {
+server.listen(port, function() {
   console.log('Listening on ' + port);
 });

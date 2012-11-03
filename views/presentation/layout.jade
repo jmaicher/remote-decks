@@ -1,8 +1,5 @@
-!!! 5
-html
-  head
-    title Awesome remote decks are awesome!
-    link(rel="stylesheet", href="/stylesheets/style.css")
-    script(src="/javascripts/jquery-1.7.2.min.js")
-  body
-    block content
+extends ../layout
+
+append head
+  link(rel="stylesheet", href="/stylesheets/presenter.css")
+  script(src="/javascripts/presentation.js")
