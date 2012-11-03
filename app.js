@@ -53,18 +53,23 @@ io.configure(function () {
   io.set("polling duration", 10);
 });
 
-var i = 1;
-
 io.of('/global').on('connection', function(socket) {
 
-  socket.emit('server-news', { i: i });
+});
+
+io.of('/presenter').on('connection', function(socket) {
   
-  socket.on('client-news', function(data) {
-    i = data.i;
-    console.log(i);
+  socket.join('presenter')
+
+  socket.on('deck.change', function(data) {
+    io.of('/presentation').emit('deck.change', data);
   });
 
 });
+
+io.of('/presentation').on('connection', function(socket) {
+
+})
 
 
 // ####################
