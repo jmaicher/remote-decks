@@ -36,7 +36,11 @@ app.use(express.logger());
 // ####################
 
 app.get('/', function(req, res) {
-  res.render('index');
+  res.render('presentation');
+});
+
+app.get('/presenter', function(req, res) {
+  res.render('presenter');
 });
 
 
