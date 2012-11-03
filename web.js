@@ -51,7 +51,7 @@ io.configure(function () {
 
 var i = 1;
 
-io.sockets.on('connection', function(socket) {
+io.of('/global').on('connection', function(socket) {
 
   socket.emit('server-news', { i: i });
   
