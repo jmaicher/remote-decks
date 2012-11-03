@@ -1,5 +1,4 @@
 var express = require('express'),
-    io = require('socket.io'),
     stylus = require('stylus'),
     http = require('http');
 
@@ -42,10 +41,25 @@ app.use(express.logger());
 
 
 // ####################
+// ## Data ############
+// ####################
+
+var Backbone = require('backbone');
+// we don't persist data
+Backbone.sync = function(method, model, options) {
+  return true;
+}
+
+var Sessions = require(__dirname + '/shared/collections/sessions').Sessions;
+
+var sessions = new Sessions();
+
+
+// ####################
 // ## Socket.io #######
 // ####################
 
-var io = io.listen(server);
+var io = require('socket.io').listen(server);
 
 // settings for heroku
 io.configure(function () {
@@ -70,22 +84,50 @@ io.of('/spectator').on('connection', function(socket) {
 });
 
 
+
+
 // ####################
 // ## Routes ##########
 // ####################
 
 app.get('/', function(req, res) {
-  res.render('spectator', {
-    title: app.get('title'),
-    layout: 'spectator/layout'
-  });
+  res.send('Hello World');
 });
 
-app.get('/speaker', function(req, res) {
-  res.render('speaker', {
-    title: 'Speaker - ' + app.get('title'),
-    layout: 'speaker/layout'
-  });
+
+// sessions
+app.get('/sessions/new', function(req, res) {
+  // create new session
+  var session = sessions.create({});
+  res.redirect('/sessions/' + session.id);
+});
+
+
+app.get('/sessions/:session_id', function(req, res) {
+  var session = sessions.get(req.params.session_id);
+  if(session) {
+    res.render('spectator', {
+      title: app.get('title'),
+      layout: 'spectator/layout',
+      session: session
+    });
+  } else {
+    res.redirect('/');
+  }
+});
+
+
+app.get('/sessions/:id/speaker', function(req, res) {
+  var session = sessions.get(req.params.id);
+  if(session) {
+    res.render('speaker', {
+      title: 'Speaker - ' + app.get('title'),
+      layout: 'speaker/layout',
+      session: session
+    });
+  } else {
+    res.send('Session "' + req.params.id + '" not found');
+  }
 });
 
 
