@@ -57,19 +57,17 @@ io.of('/global').on('connection', function(socket) {
 
 });
 
-io.of('/presenter').on('connection', function(socket) {
+io.of('/speaker').on('connection', function(socket) {
   
-  socket.join('presenter')
-
   socket.on('deck.change', function(data) {
-    io.of('/presentation').emit('deck.change', data);
+    io.of('/spectator').emit('deck.change', data);
   });
 
 });
 
-io.of('/presentation').on('connection', function(socket) {
+io.of('/spectator').on('connection', function(socket) {
 
-})
+});
 
 
 // ####################
@@ -77,16 +75,16 @@ io.of('/presentation').on('connection', function(socket) {
 // ####################
 
 app.get('/', function(req, res) {
-  res.render('presentation', {
+  res.render('spectator', {
     title: app.get('title'),
-    layout: 'presentation/layout'
+    layout: 'spectator/layout'
   });
 });
 
-app.get('/presenter', function(req, res) {
-  res.render('presenter', {
-    title: 'Presenter - ' + app.get('title'),
-    layout: 'presenter/layout'
+app.get('/speaker', function(req, res) {
+  res.render('speaker', {
+    title: 'Speaker - ' + app.get('title'),
+    layout: 'speaker/layout'
   });
 });
 
