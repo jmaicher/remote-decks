@@ -1,12 +1,28 @@
-var express = require('express');
+var express = require('express'),
+    http = require('http');
 
-var app = express.createServer(express.logger());
+// ###########################
+// ## Setup & Configuration ##
+// ###########################
 
-app.get('/', function(request, response) {
-  response.send('Hello World');
+var app = express();
+
+
+// ####################
+// ## Routes ##########
+// ####################
+
+app.get('/', function(req, res) {
+  res.send('Hello World');
 });
 
-var port = process.env.PORT || 5000;
-app.listen(port, function() {
+
+// ######################
+// ## Run kitten, run ###
+// ######################
+
+
+var port = process.env.PORT || 3000;
+http.createServer(app).listen(port, function() {
   console.log('Listening on ' + port);
 });
