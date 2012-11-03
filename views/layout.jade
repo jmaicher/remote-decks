@@ -4,8 +4,11 @@ html
     block head
       title #{title}
       link(rel="stylesheet", href="/stylesheets/shared.css")
-      script(src="/javascripts/socket.io.min.js")
-      script(src="/javascripts/jquery-1.7.2.min.js")
+      script(src="/javascripts/vendor/socket.io.min.js")
+      script(src="/javascripts/vendor/jquery-1.7.2.min.js")
+      script(src="/javascripts/vendor/underscore-1.4.2.min.js")
+      script(src="/javascripts/vendor/backbone-0.9.2.min.js")
+      script(src="/shared/test.js")
       script(src="/javascripts/shared.js")
   body
     block content

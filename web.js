@@ -17,6 +17,10 @@ app.set('title', 'Awesome remote decks are awesome!');
 // assets
 var assets_path = __dirname + '/public';
 app.use(express.static(assets_path));
+// shared modules
+var shared_modules_path = __dirname + '/shared';
+app.use('/shared', express.static(shared_modules_path));
+
 // use stylus for stylesheets
 app.use(stylus.middleware({
   debug: true,
