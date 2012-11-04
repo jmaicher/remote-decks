@@ -53,6 +53,18 @@ global.RemoteDecks = {};
 global.RemoteDecks.Session = require(__dirname + '/shared/models/session').Session;
 global.RemoteDecks.Sessions = require(__dirname + '/shared/collections/sessions').Sessions;
 
+global.helper = {};
+var _uniqueIdCounter = { 'global': 0 }
+global.helper.uniqueId = function(key) {
+  key = (typeof key === 'string' ? key : 'global');
+
+  if(!_uniqueIdCounter.hasOwnProperty(key)) {
+    _uniqueIdCounter[key] = 0;
+  }
+  
+  return _uniqueIdCounter[key] += 1;
+}
+
 
 // ####################
 // ## Data ############

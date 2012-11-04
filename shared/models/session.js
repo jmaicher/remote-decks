@@ -12,14 +12,13 @@
     initialize: function() {
       if(server) {
         // create a unique id for the session
-        var id = _.uniqueId('session-'),
+        var id = global.helper.uniqueId('session'),
             // namespaces id starts at 0, I want 1
-            rawId = parseInt(id.substring(id.indexOf('-') + 1)) + 1,
-            name = 'Session ' + rawId,
+            name = 'Session ' + id,
             now = new Date();
 
-        this.id = rawId;
-        this.set({id: rawId});
+        this.id = id;
+        this.set({id: id});
         this.set({name: name});
         this.set({created_at: now});
       }
