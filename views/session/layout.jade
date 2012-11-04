@@ -1,8 +1,12 @@
 extends ../layout
 
 append head
+  link(rel="stylesheet", href="/stylesheets/session.css")
+  script(src="/javascripts/session.js")
   script
     var session = new RemoteDecks.Session(!{JSON.stringify(session)});
 
 block content
-  include _slides
+  body.session
+    div.slides
+      include _slides

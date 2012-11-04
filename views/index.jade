@@ -4,14 +4,15 @@ append head
   link(rel="stylesheet", href="/stylesheets/index.css")
 
 block content
-  div.container
-    div.row
-      div.span6.offset3.well.sessions
-        a.create-new-session.btn.btn.btn-success(href="/sessions/new") New session
-        h1 Remote deck sessions
-        - if(sessions.length)
-          each session in sessions.models
-            .session
-              include _session
-        - else
-          p.empty Start a new session
+  body.sessions
+    div.container
+      div.row
+        div.span6.offset3.well.sessions
+          a.create-new-session.btn.btn.btn-success(href="/sessions/new") New session
+          h1 Remote deck sessions
+          - if(sessions.length)
+            each session in sessions.models
+              .session
+                include _session
+          - else
+            p.empty Start a new session
