@@ -1,0 +1,6 @@
+extends layout
+
+block content
+  a(href="/sessions/new") New session
+  each session in sessions.models
+    include _session

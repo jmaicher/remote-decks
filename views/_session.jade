@@ -1,0 +1,5 @@
+p #{session.get('id')}
+ul
+  li: a(href='/sessions/' + session.get('id')) Join as spectator
+  li: a(href='/sessions/#{session.get('id')}/speaker') Join as speaker
+

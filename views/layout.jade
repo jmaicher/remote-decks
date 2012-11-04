@@ -17,8 +17,5 @@ html
       script(src="/shared/models/session.js")
       script(src="/javascripts/shared.js")
       
-      - if (session) 
-        script
-          var session = new RemoteDecks.Session(!{JSON.stringify(session)});
   body
     block content

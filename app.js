@@ -60,7 +60,7 @@ Backbone.sync = function(method, model, options) {
   return true;
 }
 
-var sessions = new global.RemoteDecks.Sessions();
+global.sessions = new global.RemoteDecks.Sessions();
 
 
 // ####################
@@ -82,7 +82,7 @@ io.of('/global').on('connection', function(socket) {
 io.of('/speaker').on('connection', function(socket) {
   
   socket.on('slide.change', function(data) {
-    var session = sessions.get(data.session_id);
+    var session = global.sessions.get(data.session_id);
     session.set('slide', data.to);
     io.of('/spectator').emit('slide.change', data);
   });
@@ -101,24 +101,29 @@ io.of('/spectator').on('connection', function(socket) {
 // ####################
 
 app.get('/', function(req, res) {
-  res.send('Hello World');
+  var sessions = global.sessions;
+  res.render('index', {
+    title: app.get('title'),
+    layout: 'layout',
+    sessions: sessions
+  })
 });
 
 
 // sessions
 app.get('/sessions/new', function(req, res) {
   // create new session
-  var session = sessions.create({});
+  var session = global.sessions.create({});
   res.redirect('/sessions/' + session.id);
 });
 
 
 app.get('/sessions/:session_id', function(req, res) {
-  var session = sessions.get(req.params.session_id);
+  var session = global.sessions.get(req.params.session_id);
   if(session) {
-    res.render('spectator', {
+    res.render('session/spectator', {
       title: app.get('title'),
-      layout: 'spectator/layout',
+      layout: 'session/layout',
       session: session
     });
   } else {
@@ -130,9 +135,9 @@ app.get('/sessions/:session_id', function(req, res) {
 app.get('/sessions/:id/speaker', function(req, res) {
   var session = sessions.get(req.params.id);
   if(session) {
-    res.render('speaker', {
+    res.render('session/speaker', {
       title: 'Speaker - ' + app.get('title'),
-      layout: 'speaker/layout',
+      layout: 'session/layout',
       session: session
     });
   } else {
