@@ -39,6 +39,16 @@ app.set('view options', { layout: false });
 // logging
 app.use(express.logger());
 
+// ####################
+// ## Globals #########
+// ####################
+
+global._ = require('underscore');
+global.Backbone = require('backbone');
+global.RemoteDecks = {};
+global.RemoteDecks.Session = require(__dirname + '/shared/models/session').Session;
+global.RemoteDecks.Sessions = require(__dirname + '/shared/collections/sessions').Sessions;
+
 
 // ####################
 // ## Data ############
@@ -50,9 +60,7 @@ Backbone.sync = function(method, model, options) {
   return true;
 }
 
-var Sessions = require(__dirname + '/shared/collections/sessions').Sessions;
-
-var sessions = new Sessions();
+var sessions = new global.RemoteDecks.Sessions();
 
 
 // ####################
@@ -73,8 +81,10 @@ io.of('/global').on('connection', function(socket) {
 
 io.of('/speaker').on('connection', function(socket) {
   
-  socket.on('deck.change', function(data) {
-    io.of('/spectator').emit('deck.change', data);
+  socket.on('slide.change', function(data) {
+    var session = sessions.get(data.session_id);
+    session.set('slide', data.to);
+    io.of('/spectator').emit('slide.change', data);
   });
 
 });
@@ -112,7 +122,7 @@ app.get('/sessions/:session_id', function(req, res) {
       session: session
     });
   } else {
-    res.redirect('/');
+    res.redirect('/sessions/new');
   }
 });
 

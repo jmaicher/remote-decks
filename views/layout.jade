@@ -13,7 +13,12 @@ html
       script(src="/javascripts/vendor/underscore-1.4.2.min.js")
       script(src="/javascripts/vendor/backbone-0.9.2.min.js")      
       script(src="/javascripts/vendor/deck.js/deck.core.js")
+      script(src="/javascripts/vendor/namespace.js")
+      script(src="/shared/models/session.js")
       script(src="/javascripts/shared.js")
-
+      
+      - if (session) 
+        script
+          var session = new RemoteDecks.Session(!{JSON.stringify(session)});
   body
     block content

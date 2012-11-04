@@ -1,13 +1,13 @@
-(function(exports, server) {
-
-  if(server) {
-    var _ = require('underscore'),
-        Backbone = require('backbone'),
-        Session = require(__dirname + '/../models/session').Session;
-  }
+(function(global, exports, server) {
+  var _ = global._,
+      Backbone = global.Backbone,
+      Session = global.RemoteDecks.Session;
 
   exports.Sessions = Backbone.Collection.extend({
     model: Session 
   });
 
-}(typeof exports === 'undefined' ? this['Sessions'] = {} : exports, typeof exports !== 'undefined'));
+}(
+  typeof exports === 'undefined' ? window : global,
+  typeof exports === 'undefined' ? namespace('RemoteDecks') : exports,
+  typeof exports !== 'undefined'));

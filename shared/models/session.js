@@ -1,12 +1,13 @@
-(function(exports, server) {
-
-  if(server) {
-    var _ = require('underscore'),
-        Backbone = require('backbone');
-  }
+(function(global, exports, server) {
+  var _ = global._,
+      Backbone = global.Backbone;
 
   exports.Session = Backbone.Model.extend({
   
+    defaults: {
+      slide: 0
+    },  
+
     initialize: function() {
       if(server) {
         // create a unique id for the session
@@ -18,4 +19,6 @@
 
   });
 
-}(typeof exports === 'undefined' ? this['Session'] = {} : exports, typeof exports !== 'undefined'));
+}(typeof exports === 'undefined' ? window : global,
+  typeof exports === 'undefined' ? namespace('RemoteDecks') : exports,
+  typeof exports !== 'undefined'));
