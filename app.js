@@ -22,9 +22,10 @@ app.use('/shared', express.static(shared_modules_path));
 
 // use stylus for stylesheets
 app.use(stylus.middleware({
+  force: true,
   debug: true,
   src: assets_path,
-  compile: function(str, path) {
+  compile: function(str, path, fn) {
     return stylus(str)
       .set('filename', path)
   }
@@ -38,6 +39,9 @@ app.set('view options', { layout: false });
 
 // logging
 app.use(express.logger());
+
+// helper
+app.locals.timeago = require('timeago');
 
 // ####################
 // ## Globals #########

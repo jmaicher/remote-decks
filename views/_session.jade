@@ -1,5 +1,10 @@
-p #{session.get('id')}
-ul
-  li: a(href='/sessions/' + session.get('id')) Join as spectator
-  li: a(href='/sessions/#{session.get('id')}/speaker') Join as speaker
-
+div.join
+  a(href='/sessions/' + session.get('id')) Join as spectator
+  &nbsp;|&nbsp;
+  a(href='/sessions/#{session.get('id')}/speaker') Join as speaker
+p.name.lead #{session.get('name')}
+span.meta
+  small.created_at.label started  
+    i= timeago(session.get('created_at'))
+  &nbsp;
+  small.slide.label.label-info Current slide: #{parseInt(session.get('slide')) + 1}/#{session.get('slide_count')}

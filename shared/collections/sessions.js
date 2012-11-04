@@ -4,7 +4,9 @@
       Session = global.RemoteDecks.Session;
 
   exports.Sessions = Backbone.Collection.extend({
-    model: Session 
+
+    model: Session,
+
   });
 
 }(
