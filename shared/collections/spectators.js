@@ -1,15 +1,15 @@
 (function(global, exports, server) {
   var _ = global._,
       Backbone = global.Backbone,
-      Speaker = global.RemoteDecks.Speaker;
+      Spectator = global.RemoteDecks.Spectator;
 
-  exports.Speakers = Backbone.Collection.extend({
+  exports.Spectators = Backbone.Collection.extend({
 
-    model: Speaker,
+    model: Spectator,
 
     getConnected: function() {
-      return this.filter(function(speaker) {
-        return speaker.get('connected') === true;
+      return this.filter(function(spectator) {
+        return spectator.get('connected') === true;
       });
     }
 

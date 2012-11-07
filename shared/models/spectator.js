@@ -1,31 +1,26 @@
 (function(global, exports, server) {
 var _ = global._,
     Backbone = global.Backbone,
-    Speakers = global.RemoteDecks.Speakers,
-    Spectators = global.RemoteDecks.Spectators;
+    Speakers = global.RemoteDecks.Spectator;
 
-exports.Session = Backbone.Model.extend({
+exports.Spectator = Backbone.Model.extend({
 
   defaults: {
-    slide: 0,
-    slide_count: 2
+    connected: false
   },  
 
   initialize: function() {
     if(server) {
       // create a unique id for the session
-      var id = global.helper.uniqueId('session'),
+      var id = global.helper.uniqueId('spectator'),
           // namespaces id starts at 0, I want 1
-          name = 'Session ' + id,
+          name = 'Spectator ' + id,
           now = new Date();
 
       this.id = id;
       this.set({id: id});
       this.set({name: name});
       this.set({created_at: now});
-
-      this.speakers = new Speakers();
-      this.spectators = new Spectators();
     }
   },
 

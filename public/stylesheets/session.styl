@@ -1,5 +1,30 @@
 body.session
   background-color: #F0F0F0
+  
+  .action-bar
+    position: absolute
+    top: 5px
+    right: 5px
+    
+    a
+      display: none
+      
+      i
+        display: none
+
+    a.pending
+      display: inline-block
+      i.pending-icon
+        display: block
+    a.connected
+      display: inline-block
+      i.connected-icon
+        display: block
+    a.disconnected
+      display: inline-block
+      i.disconnected-icon
+        display: block
+        
 
   .slides
     width: 100%

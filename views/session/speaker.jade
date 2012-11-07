@@ -3,3 +3,12 @@ extends layout
 append head
   link(rel="stylesheet", href="/stylesheets/speaker.css")
   script(src="/javascripts/speaker.js")
+  script
+    var speaker = new RemoteDecks.Speaker(!{JSON.stringify(speaker)});
+
+prepend content
+  div.btn-group.action-bar
+    a.btn.btn-small.btn-success.dropdown-toggle(data-toggle="dropdown", href="javascript:;")
+      i.connected-icon.icon-ok.icon-white
+      i.disconnected-icon.icon-remove.icon-white
+      i.pending-icon.icon-refresh.icon-white

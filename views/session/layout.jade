@@ -5,6 +5,8 @@ append head
   script(src="/javascripts/session.js")
   script
     var session = new RemoteDecks.Session(!{JSON.stringify(session)});
+    session.speakers = new RemoteDecks.Speakers(!{JSON.stringify(session.speakers.getConnected())});
+    session.spectators = new RemoteDecks.Spectators(!{JSON.stringify(session.spectators.getConnected())});
 
 block content
   body.session

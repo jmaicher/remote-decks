@@ -50,6 +50,10 @@ app.locals.timeago = require('timeago');
 global._ = require('underscore');
 global.Backbone = require('backbone');
 global.RemoteDecks = {};
+global.RemoteDecks.Speaker = require(__dirname + '/shared/models/speaker').Speaker;
+global.RemoteDecks.Speakers = require(__dirname + '/shared/collections/speakers').Speakers;
+global.RemoteDecks.Spectator = require(__dirname + '/shared/models/spectator').Spectator;
+global.RemoteDecks.Spectators = require(__dirname + '/shared/collections/spectators').Spectators;
 global.RemoteDecks.Session = require(__dirname + '/shared/models/session').Session;
 global.RemoteDecks.Sessions = require(__dirname + '/shared/collections/sessions').Sessions;
 
@@ -104,28 +108,43 @@ var SessionRoomManagement = require(__dirname + '/modules/session_room_managemen
 io.on('connection', function(socket) {
 
   socket.on('join.speaker', function(req) {
-    var speakerJoinReq = new SessionRoomManagement.SessionRoomSpeakerJoinRequest(socket, req);
-    var success = SessionRoomManagement.join(speakerJoinReq);
-    var session;
+    var speakerJoinReq = new SessionRoomManagement.SpeakerJoinRequest(socket, req),
+        session = speakerJoinReq.session,
+        speaker = speakerJoinReq.speaker;
 
-    if(success) {
-      session = speakerJoinReq.session;
+    // Refactoring: Let join return connection object?
+    if(SessionRoomManagement.join(speakerJoinReq)) {
+      // SPEAKER CONNECTED
+
       // allow slide change
       socket.on('slide.change', function(data) {
         session.set('slide', data.to);
-        // send notification to all speakers in the session room
         socket.broadcast.to(session.session_id).emit('slide.change', data);
       });
+    
+      socket.on('disconnect', function () {
+        SessionRoomManagement.leave(socket, session, speaker);
+      });
 
-    } else {
-      // failure
     }
 
   });
 
   socket.on('join.spectator', function(req) {
-    var joinReq = new SessionRoomManagement.SessionRoomJoinRequest(socket, req);
-    SessionRoomManagement.join(joinReq);
+    var spectatorJoinReq = new SessionRoomManagement.SpectatorJoinRequest(socket, req),
+        session = spectatorJoinReq.session,
+        spectator = spectatorJoinReq.spectator;
+
+
+    // Refactoring: Let join return connection object?
+    if(SessionRoomManagement.join(spectatorJoinReq)) {
+      // SPECTATOR CONNECTED 
+
+      socket.on('disconnect', function () {
+        SessionRoomManagement.leave(socket, session, speaker);
+      });
+
+    }
   });
 
 });
@@ -135,6 +154,101 @@ io.on('connection', function(socket) {
 // ## Routes ##########
 // ####################
 
+app.get('/sessions/:session_id/spectators/new', function(req, res) {
+  var session = global.sessions.get(req.params.session_id),
+      spectator;
+
+  if(session) {
+    spectator = session.spectators.create(); 
+    res.redirect('/sessions/' + session.get('id') + '/spectators/' + spectator.get('id'));
+  } else {
+    res.send('Session "' + req.params.session_id + '" not found');
+  }
+
+});
+
+
+app.get('/sessions/:session_id/spectators/:id', function(req, res) {
+  var session = global.sessions.get(req.params.session_id),
+      spectator;
+
+  if(session) {
+    spectator = session.spectators.get(req.params.id);
+    
+    if(spectator) {
+      res.render('session/spectator', {
+        title: spectator.get('name') + ' - ' + app.get('title'),
+        layout: 'session/layout',
+        session: session,
+        spectator: spectator
+      });    
+    } else {
+      res.redirect('/sessions/' + session.get('id') + '/spectators/new')
+    }
+
+  } else {
+    res.send('Session "' + req.params.session_id + '" not found');
+  }
+
+});
+
+
+app.get('/sessions/:session_id/speakers/new', function(req, res) {
+  var session = global.sessions.get(req.params.session_id),
+      speaker;
+
+  if(session) {
+    speaker = session.speakers.create(); 
+    res.redirect('/sessions/' + session.get('id') + '/speakers/' + speaker.get('id'));
+  } else {
+    res.send('Session "' + req.params.session_id + '" not found');
+  }
+});
+
+
+app.get('/sessions/:session_id/speakers/:id', function(req, res) {
+  var session = global.sessions.get(req.params.session_id),
+      speaker;
+
+  if(session) {
+    speaker = session.speakers.get(req.params.id);
+    
+    if(speaker) {
+      res.render('session/speaker', {
+        title: speaker.get('name') + ' - ' + app.get('title'),
+        layout: 'session/layout',
+        session: session,
+        speaker: speaker
+      });    
+    } else {
+      res.redirect('/sessions/' + session.get('id') + '/speakers/new')
+    }
+
+  } else {
+    // TODO: Change in production
+    res.redirect('/sessions/new');
+    // res.send('Session "' + req.params.session_id + '" not found');
+  }
+});
+
+
+app.get('/sessions/new', function(req, res) {
+  // create new session
+  var session = global.sessions.create();
+  res.redirect('/sessions/' + session.id + '/speakers/new');
+});
+
+
+app.get('/sessions/:id', function(req, res) {
+  var session = global.sessions.get(req.params.session_id);
+  if(session) {
+    res.redirect('/sessions/' + session.get('id') + '/speakers/new');
+  } else {
+    res.send('Session "' + req.params.id + '" not found');
+  }
+});
+
+
 app.get('/', function(req, res) {
   var sessions = global.sessions;
   res.render('index', {
@@ -142,42 +256,6 @@ app.get('/', function(req, res) {
     layout: 'layout',
     sessions: sessions
   });
-});
-
-
-// sessions
-app.get('/sessions/new', function(req, res) {
-  // create new session
-  var session = global.sessions.create({});
-  res.redirect('/sessions/' + session.id);
-});
-
-
-app.get('/sessions/:session_id', function(req, res) {
-  var session = global.sessions.get(req.params.session_id);
-  if(session) {
-    res.render('session/spectator', {
-      title: app.get('title'),
-      layout: 'session/layout',
-      session: session
-    });
-  } else {
-    res.redirect('/sessions/new');
-  }
-});
-
-
-app.get('/sessions/:id/speaker', function(req, res) {
-  var session = sessions.get(req.params.id);
-  if(session) {
-    res.render('session/speaker', {
-      title: 'Speaker - ' + app.get('title'),
-      layout: 'session/layout',
-      session: session
-    });
-  } else {
-    res.send('Session "' + req.params.id + '" not found');
-  }
 });
 
 

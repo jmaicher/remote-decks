@@ -3,3 +3,5 @@ extends layout
 append head
   link(rel="stylesheet", href="/stylesheets/spectator.css")
   script(src="/javascripts/spectator.js")
+  script
+    var spectator = new RemoteDecks.Spectator(!{JSON.stringify(spectator)});

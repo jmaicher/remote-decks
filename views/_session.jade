@@ -1,7 +1,7 @@
 div.join
-  a(href='/sessions/' + session.get('id')) Join as spectator
+  a(href='/sessions/#{session.get('id')}/spectators/new') Join as spectator
   &nbsp;|&nbsp;
-  a(href='/sessions/#{session.get('id')}/speaker') Join as speaker
+  a(href='/sessions/#{session.get('id')}/speakers/new') Join as speaker
 p.name.lead #{session.get('name')}
 span.meta
   small.created_at.label started  
