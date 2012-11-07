@@ -27,7 +27,7 @@ app.use(stylus.middleware({
   src: assets_path,
   compile: function(str, path, fn) {
     return stylus(str)
-      .set('filename', path)
+      .set('filename', path);
   }
 }));
 
@@ -53,18 +53,24 @@ global.RemoteDecks = {};
 global.RemoteDecks.Session = require(__dirname + '/shared/models/session').Session;
 global.RemoteDecks.Sessions = require(__dirname + '/shared/collections/sessions').Sessions;
 
-global.helper = {};
-var _uniqueIdCounter = { 'global': 0 }
-global.helper.uniqueId = function(key) {
-  key = (typeof key === 'string' ? key : 'global');
+global.helper = {
 
-  if(!_uniqueIdCounter.hasOwnProperty(key)) {
-    _uniqueIdCounter[key] = 0;
+  /**
+   * Manage unique ids
+   */
+  _uniqueIdCounter: { 'global': 0 },
+
+  uniqueId: function(key) {
+    key = (typeof key === 'string' ? key : 'global');
+
+    if(!this._uniqueIdCounter.hasOwnProperty(key)) {
+      this._uniqueIdCounter[key] = 0;
+    }
+    
+    return this._uniqueIdCounter[key] += 1;
   }
-  
-  return _uniqueIdCounter[key] += 1;
-}
 
+};
 
 // ####################
 // ## Data ############
@@ -74,7 +80,7 @@ var Backbone = require('backbone');
 // we don't persist data
 Backbone.sync = function(method, model, options) {
   return true;
-}
+};
 
 global.sessions = new global.RemoteDecks.Sessions();
 
@@ -91,25 +97,38 @@ io.configure(function () {
   io.set("polling duration", 10);
 });
 
-io.of('/global').on('connection', function(socket) {
 
-});
+var SessionRoomManagement = require(__dirname + '/modules/session_room_management').init(global.sessions, io);
 
-io.of('/speaker').on('connection', function(socket) {
-  
-  socket.on('slide.change', function(data) {
-    var session = global.sessions.get(data.session_id);
-    session.set('slide', data.to);
-    io.of('/spectator').emit('slide.change', data);
+// TODO: Refactoring (Do I really need different namespaces for speakers and spectators?)
+io.on('connection', function(socket) {
+
+  socket.on('join.speaker', function(req) {
+    var speakerJoinReq = new SessionRoomManagement.SessionRoomSpeakerJoinRequest(socket, req);
+    var success = SessionRoomManagement.join(speakerJoinReq);
+    var session;
+
+    if(success) {
+      session = speakerJoinReq.session;
+      // allow slide change
+      socket.on('slide.change', function(data) {
+        session.set('slide', data.to);
+        // send notification to all speakers in the session room
+        socket.broadcast.to(session.session_id).emit('slide.change', data);
+      });
+
+    } else {
+      // failure
+    }
+
+  });
+
+  socket.on('join.spectator', function(req) {
+    var joinReq = new SessionRoomManagement.SessionRoomJoinRequest(socket, req);
+    SessionRoomManagement.join(joinReq);
   });
 
 });
-
-io.of('/spectator').on('connection', function(socket) {
-
-});
-
-
 
 
 // ####################
@@ -122,7 +141,7 @@ app.get('/', function(req, res) {
     title: app.get('title'),
     layout: 'layout',
     sessions: sessions
-  })
+  });
 });
 
 
