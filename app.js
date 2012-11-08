@@ -141,7 +141,7 @@ io.on('connection', function(socket) {
       // SPECTATOR CONNECTED 
 
       socket.on('disconnect', function () {
-        SessionRoomManagement.leave(socket, session, speaker);
+        SessionRoomManagement.leave(socket, session, spectator);
       });
 
     }

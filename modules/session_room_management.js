@@ -30,8 +30,9 @@ exports.init = (function(sessions, io) {
       }
     },
 
-    leave: function(socket, session, speaker) {
+    leave: function(socket, session, actor) {
       // TODO
+      actor.set('connected', true);
     }
 
   };
