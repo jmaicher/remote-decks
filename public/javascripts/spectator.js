@@ -11,18 +11,27 @@ $(function() {
   DM.disableControls();
 
   socket.on('connect', function() {
+    EM.trigger('connection.pending')
     // join as speaker
     SM.join();
   });
 
   socket.on('disconnect', function() {
     // TODO: NOTIFY USER
+    EM.trigger('connection.failure');
   });
 
 
   SM.on('join.success', function() {
     // connect general socket manager
     new SocketManager(socket); 
+    EM.trigger('connection.success');
+  });
+
+  SM.on('join.failure', function(data) {
+    // TODO: Notify user
+    console.log(data);
+    EM.trigger('connection.failure');
   });
 
   EM.on('slide.change', function(data) {
