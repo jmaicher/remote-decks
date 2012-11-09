@@ -8,7 +8,7 @@ exports.Session = Backbone.Model.extend({
 
   defaults: {
     slide: 0,
-    slide_count: 5
+    slide_count: 6
   },  
 
   initialize: function() {
