@@ -119,7 +119,15 @@ io.on('connection', function(socket) {
       // allow slide change
       socket.on('slide.change', function(data) {
         session.set('slide', data.to);
-        socket.broadcast.to(session.session_id).emit('slide.change', data);
+        SessionRoomManagement.broadcast(socket, session, 'slide.change', data);
+      });
+
+      socket.on('video.play', function(data) {
+        SessionRoomManagement.send_spectators(socket, session, 'video.play'); 
+      });
+
+      socket.on('video.pause', function(data) {
+        SessionRoomManagement.send_spectators(socket, session, 'video.pause');
       });
     
       socket.on('disconnect', function () {

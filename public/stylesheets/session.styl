@@ -1,12 +1,27 @@
+*.only-speaker, *.only-spectator
+  display: none
+
+.notifications
+  z-index: 1000
+
+body.speaker
+  li.only-speaker
+    display: list-item
+body.spectator
+  li.only-spectator
+    display: list-item 
+
 body.session
   background-color: #F0F0F0
+  font-size: 16px
   
   .action-bar
+    z-index: 1000
     position: absolute
     top: 5px
     right: 5px
-    
-    a
+     
+    > a
       display: none
       
       i
@@ -24,6 +39,14 @@ body.session
       display: inline-block
       i.disconnected-icon
         display: block
+    
+    .dropdown-menu:after
+      left: auto
+      right: 13px
+
+    .dropdown-menu
+      left: auto
+      right: 0
         
 
   .slides
@@ -32,16 +55,66 @@ body.session
 
     .deck-container
       width: auto
-      max-width: 864px
-      margin: 16px auto 24px auto
-      min-height: 560px
-      font-size: 16px
+      max-width: 960px
+      min-height: 600px    
       border-radius: 10px
       -webkit-border-radius: 10px
       -moz-border-radius: 10px
       -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3)
       -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3)
       box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3)
-    
+
+    @media all and (device-width: 768px) and (device-height: 1024px) and (orientation:portrait)
+      .deck-container
+        max-width: 550px
+        min-height: 450px
+
+    @media all and (device-width: 768px) and (device-height: 1024px) and (orientation:landscape)
+      .deck-container
+        max-width: 864px
+        min-height: 560px
+
+    .deck-container
+
+      section.intro
+        h1
+          top: 70%
+        img
+          position: absolute
+          top: 5%
+          right: 0
+          left: 0
+
       section.slide
         background-color: transparent !important
+
+        h1
+          font-size: 2.5em
+
+        h2
+          font-size: 1.75em
+
+        blockquote
+          font-size: 1.25em
+
+        p.right
+          text-align: right
+        
+        p a, li a, td a, a:visited, li a:visited, td a:visited
+          color: #1b70e0
+          text-decoration: underline
+
+        p a:hover, li a:hover, td a:hover
+          text-decoration: none
+          background-color: #c00
+          color: white
+
+        img.hammer
+          height: 60%
+
+        video
+          margin-top: 15px
+
+@media all and (device-width: 768px) and (device-height: 1024px) and (orientation:portrait)
+  body.session
+    font-size: 12px

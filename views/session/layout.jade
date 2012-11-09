@@ -10,10 +10,28 @@ append head
 
 block content
   body.session
+    div.notifications.bottom-right
     div.btn-group.action-bar
-      a.btn.btn-small.btn-success.dropdown-toggle(data-toggle="dropdown", href="javascript:;")
+      a.btn.btn-small.btn-success.dropdown-toggle(href="javascript:;")
         i.connected-icon.icon-ok.icon-white
         i.disconnected-icon.icon-remove.icon-white
         i.pending-icon.icon-refresh.icon-white
+      ul.dropdown-menu
+        li
+          a.info.spectators(href="javascript:;")
+            i.icon-user 
+            |  Spectators: 
+            span#spectator-count 0
+        li
+          a.info.speakers
+            i.icon-user
+            |  Speakers: 
+            span#speaker-count 0
+        li.divider
+        li.only-spectator
+          a(href="/sessions/#{session.get('id')}/speakers/new") Join as speaker
+        li.only-speaker
+          a(href="/sessions/#{session.get('id')}/spectators/new") Join as spectator
+        
     div.slides
       include _slides

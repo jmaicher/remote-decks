@@ -1,6 +1,7 @@
 !!! 5
 html
   head
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
     block head
       title #{title}
       link(rel="stylesheet", href="/stylesheets/vendor/deck.js/deck.core.css")
@@ -8,6 +9,7 @@ html
       link(rel="stylesheet", href="/stylesheets/vendor/deck.js/transitions/horizontal-slide.css")
       link(rel="stylesheet", href="/stylesheets/vendor/bootstrap/bootstrap.css")
       link(rel="stylesheet", href="/stylesheets/vendor/bootstrap/bootstrap-responsive.min.css")
+      link(rel="stylesheet", href="/stylesheets/vendor/bootstrap-notify.css")
       link(rel="stylesheet", href="/stylesheets/style.css")
       script(src="/javascripts/vendor/socket.io.min.js")
       script(src="/javascripts/vendor/jquery-1.7.2.min.js")
@@ -18,6 +20,7 @@ html
   
       script(src="/javascripts/vendor/deck.js/deck.core.js")
       script(src="/javascripts/vendor/bootstrap.min.js")
+      script(src="/javascripts/vendor/bootstrap-notify.js")
       script(src="/javascripts/vendor/namespace.js")
 
       script(src="/shared/models/speaker.js")

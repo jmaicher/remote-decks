@@ -3,10 +3,53 @@ $(function() {
   var DM = window.DeckManager,
       EM = window.EventManager,
       session = window.session,
+      $speakerCount = $('#speaker-count'),
+      $spectatorCount = $('#spectator-count'),
       $actionButton = $('.action-bar > a.btn'),
-      actionButtonStates = ['pending', 'connected', 'disconnected'];
-      actionButtonStyles = ['btn-warning', 'btn-success', 'btn-danger']
-   
+      actionButtonStates = ['pending', 'connected', 'disconnected'],
+      actionButtonStyles = ['btn-warning', 'btn-success', 'btn-danger'];
+
+  // fix bootstrap dropdown for touch events
+  // see: https://github.com/twitter/bootstrap/issues/2975#issuecomment-6659992
+  $('body').on('touchstart.dropdown', '.dropdown-menu', function (e) { e.stopPropagation(); });
+
+  // set speaker/spectator count
+  var updateSpeakerCount = function() {
+    $speakerCount.html(session.speakers.length);
+  };
+  updateSpeakerCount();
+
+  var updateSpectatorCount = function() {
+    $spectatorCount.html(session.spectators.length);
+  }; 
+  updateSpectatorCount();
+  
+  session.speakers.on('add remove', updateSpeakerCount);
+  session.spectators.on('add remove', updateSpectatorCount);
+
+  // handle [spectator|speaker].[connected|disconnected]
+  EM.on('speaker.connected', function(speaker) {
+    session.speakers.add(speaker); 
+    // show notification
+    $('.bottom-right').notify({
+      message: { text: 'New speaker connected' }
+    }).show();
+  });
+
+  EM.on('speaker.disconnected', function(speaker) {
+    session.speakers.remove(speaker);
+  });
+
+  EM.on('spectator.connected', function(spectator) {
+    session.spectators.add(spectator);
+  });
+
+  EM.on('spectator.disconnected', function(spectator) {
+    session.spectators.add(spectator);
+  });
+
+
+  // action bar stuff
   EM.on('connection.pending', function() {
     $actionButton.removeClass(actionButtonStates.join(' '));
     $actionButton.removeClass(actionButtonStyles.join(' '));
@@ -19,13 +62,15 @@ $(function() {
     $actionButton.removeClass(actionButtonStyles.join(' '));
     $actionButton.addClass(actionButtonStates[1]);
     $actionButton.addClass(actionButtonStyles[1]);
+    $actionButton.attr('data-toggle', 'dropdown');
   });
 
-  EM.on('connection.failure', function() {
+  EM.on('connection.failure disconnect', function() {
     $actionButton.removeClass(actionButtonStates.join(' '));
     $actionButton.removeClass(actionButtonStyles.join(' '));
     $actionButton.addClass(actionButtonStates[2]);
     $actionButton.addClass(actionButtonStyles[2]);
+    $actionButton.attr('data-toggle', '');
   });
 
 

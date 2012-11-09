@@ -11,11 +11,11 @@ exports.init = (function(sessions, io) {
         if(joinRequest instanceof this.SpeakerJoinRequest) {
           actor = joinRequest.speaker;
           Helper._add_to_session_speaker_room(joinRequest);
-          // TODO: Notify all users
+          this.broadcast(joinRequest.socket, joinRequest.session, 'speaker.connected', actor);
         } else {
           actor = joinRequest.spectator;
           Helper._add_to_session_spectator_room(joinRequest);
-          // TODO: Notify all users
+          this.broadcast(joinRequest.socket, joinRequest.session, 'spectator.connected', actor);
         }
 
         // mark actor as connected
@@ -31,8 +31,20 @@ exports.init = (function(sessions, io) {
     },
 
     leave: function(socket, session, actor) {
-      // TODO
-      actor.set('connected', true);
+      actor.set('connected', false);
+      if(actor instanceof global.RemoteDecks.Speaker) {
+        this.broadcast(socket, session, 'speaker.disconnected', actor);
+      } else {
+        this.broadcast(socket, session, 'spectator.disconnected', actor);
+      }
+    },
+
+    broadcast: function(socket, session, message, data) {
+      socket.broadcast.to(Helper._session_room_name(session)).emit(message, data);
+    },
+
+    send_spectators: function(socket, session, message, data) {
+      io.sockets.in(Helper._session_spectator_room_name(session)).emit(message, data);
     }
 
   };

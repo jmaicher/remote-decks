@@ -1,29 +1,47 @@
 div.deck-container
 
-  section.slide
-    h1 Current state of Multi-Touch in Web Browsers
+  section.intro.slide
+    h1 The web as application platform
+    img(src="http://www.w3.org/html/logo/downloads/HTML5_Logo_256.png")
 
   section.slide
     h2 Evolution of the web
     blockquote The Web over 20 years has developed from a Web of more-or-less static documents to, now, a platform for applications.
-    p Ian Jacobs, W3C
+    p.right Ian Jacobs, W3C
 
   section.slide
-    h2 What's HTML5?
-    p HTML5 is more than just a markup language
-    p HTML5 is a marketing name for a whole set of technologies:
-    ul      
-      li the markup language itself (HTML Version 5)
-      li the Document Object Model
-      li Cascading Stylesheets (CSS3)
-      li JavaScript
-      li about 60 specific (JavaScript) APIs to access new browser-based graphics, geolocation, local storage, video capabilities, ...
+    h2 Things you might not know
 
-  section.slide
-    h2 Touch events
     ul
-      li touch_down
-      li touch_move
-      li touch_up
+      li: a(href="http://media.tojicode.com/q3bsp/") Hardware-accelerated rendering with WebGL
+      li: a(href="http://www.html5rocks.com/en/tutorials/getusermedia/intro/") Capturing Audio &amp; Video in the browser
+      li: a(href="http://www.html5rocks.com/en/features/offline") Offline-support for web applications
+      li: a(href="http://en.wikipedia.org/wiki/JavaScript_engine#Performance_evolution") JavaScript is getting faster and faster
+      li: a(href="http://getchrome.eu") There are operating systems written around web browsers
+      li: a(href="http://msdn.microsoft.com/en-us/library/windows/apps/br211386.aspx") Windows 8 Apps can be developed with HTML5
+    ul
+      li Further reading:  
+        a(href="http://www.html5rocks.com") http://www.html5rocks.com
+
+  section.slide
+    h2 Nice, but you can't touch this!
+    img.hammer(src="/images/hammer.png")
+
+  section.slide
+    h2 Actually you can!
+    p (when your browser implements the touch events API)
+    ul
+      li: a(href="http://www.w3.org/TR/touch-events/") http://www.w3.org/TR/touch-events/
+      li: a(href="http://caniuse.com/#feat=touch") http://caniuse.com/#feat=touch
+
+  section.slide
+    h2 HTML5 video tag
+    br
+    video(width="500", controls="controls")
+      source(src="http://jmaicher.de/MAGIC.mp4", type="video/mp4")
+
+  section.slide
+    h2 Massive multitouch using HTML5
+    iframe(src="http://www.youtube.com/embed/aaRm4hiXbCg", width="640", height="385", frameborder="0")
 
   

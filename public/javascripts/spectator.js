@@ -1,11 +1,27 @@
 $(function() {
 
+  // quick workaround to identify spectator
+  $('body').addClass('spectator');
+
   var EM = window.EventManager,
       DM = window.DeckManager,
       session = window.session,
       spectator = window.spectator,
       socket = io.connect(),
       SM = new SpectatorSocketManager(socket, session, spectator);
+
+  // disable video controls
+  $('video').on('click touchstart', function(e) {
+    e.preventDefault();
+  });
+
+  SM.on('video.play', function() {
+    $('.deck-current video').get(0).play();
+  });
+
+  SM.on('video.pause', function() {
+    $('.deck-current video').get(0).pause();
+  });
 
   // spectators can not controls the slides
   DM.disableControls();
@@ -18,14 +34,17 @@ $(function() {
 
   socket.on('disconnect', function() {
     // TODO: NOTIFY USER
-    EM.trigger('connection.failure');
+    EM.trigger('disconnect');
+    // remove spectator from connected spectators
+    session.spectators.remove(spectator);
   });
-
 
   SM.on('join.success', function() {
     // connect general socket manager
     new SocketManager(socket); 
     EM.trigger('connection.success');
+    // add spectator to connected specatators collection
+    session.spectators.add(spectator);
   });
 
   SM.on('join.failure', function(data) {
@@ -49,9 +68,10 @@ window.SpectatorSocketManager = function(socket, session, spectator) {
   _.extend(this, Backbone.Events);
 
   var self = this;
-  _.each(['join.success', 'join.failure'], function(ev) {
+  _.each(['join.success', 'join.failure', 'video.play', 'video.pause'], function(ev) {
     socket.on(ev, function(data) {
       self.trigger(ev);
+      console.log(ev);
     });
   });
 };
